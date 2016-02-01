@@ -6,31 +6,39 @@
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 
   <style type="text/css">
-    #messages {
-      height: 250px;
-      background-color: #ccc;
-    }
+    #content { display:none; width: 80%; margin: 0 auto;}
+    #chatsWrap { }
+    #chats { height: 250px; width: 78%; background-color: #ccc; float: left;}
+    #usersWrap { height: 250px; width: 20%; background-color: #ccc; float: right; }
+    #users { padding: 8px; text-align: center; }
   </style>
 </head>
 
 <body>
 
 <!-- Input username before everything start -->
-<div id="beforeContent">
-  <p>Username:</p>
-  <form>
-    <input type="text" id="username" />
+<div id="usernameWrap">
+  <p id="usernameErr"></p>
+  <form id="usernameForm">
+    <label>Username:</label>
+    <input id="username" />
     <input type="submit" />
   </form>
 </div>
 
 <!-- Chat room -->
 <div id="content">
-  <div id="messages"></div>
-  <form id="message-form"  method="post" action="">
-    <input id="message-val" type="text" name="val" />
-    <input type="submit" />
-  </form>
+  <div id="chatsWrap">
+    <div id="chats"></div>
+    <div id="usersWrap">
+      <div id="users"></div>
+    </div>
+  </div>
+
+    <form id="messageForm">
+      <input id="message" />
+      <input type="submit" />
+    </form>
 </div>
 
 </body>
@@ -39,19 +47,58 @@
 <script type="text/javascript">
   $(function(){
     var socket = io.connect  (),
-          $msg = $('#messages'),
-          $form = $('#message-form'),
-          $input = $('#message-val');
+          // for username form
+          $usernameWrap = $('#usernameWrap'),
+          $usernameErr = $('#usernameErr'),
+          $usernameForm = $('#usernameForm'),
+          $username = $('#username'),
+          // for chat room
+          $content = $('#content'),
+          $chatsWrap = $('#chatsWrap'),
+          $chats = $('#chats'),
+          $messageForm = $('#messageForm'),
+          $message = $('#message'),
+          // for users
+          $users = $('#users');
     
-          $form.submit(function(e){
-            e.preventDefault();
-            socket.emit('message', $input.val());
-            $input.val() = '';
-          });
+          
+      /* Emit message */
+      $messageForm.submit(function(e){
+        e.preventDefault();
+        socket.emit('message', $message.val());
+        $message.val('');
+      });
 
-          socket.on('new message', function(data){
-            $msg.append('> '+data+'<br/>');
-          });
+      
+      /* New message */
+      socket.on('new message', function(data){
+        $chats.append('<b>'+data.user+'</b>: '+data.msg+'<br/>');
+      });
+
+
+      /* Emit username */
+      $usernameForm.submit(function(e){
+        e.preventDefault();
+        socket.emit('new user', $username.val(), function(ok){
+          if(!ok){
+            $usernameErr.html('"'+$username.val()+'"'+' has been used, please try again!');
+          }
+          else{
+            $usernameWrap.hide();
+            $content.show();
+          }
+        });
+      });
+
+
+      /* User onlines */
+      socket.on('user online', function(data){
+        var str = '';
+        for(var i in data){
+          str += data[i]+'<br/>';
+        }
+        $users.html(str);
+      })
   });
 </script>
 
