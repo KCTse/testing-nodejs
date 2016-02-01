@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat - socket.io and node.js</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+
+  <style type="text/css">
+    #messages {
+      height: 250px;
+      background-color: #ccc;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Input username before everything start -->
+<div id="beforeContent">
+  <p>Username:</p>
+  <form>
+    <input type="text" id="username" />
+    <input type="submit" />
+  </form>
+</div>
+
+<!-- Chat room -->
+<div id="content">
+  <div id="messages"></div>
+  <form id="message-form"  method="post" action="">
+    <input id="message-val" type="text" name="val" />
+    <input type="submit" />
+  </form>
+</div>
+
+</body>
+
+<!-- Socket IO -->
+<script type="text/javascript">
+  $(function(){
+    var socket = io.connect  (),
+          $msg = $('#messages'),
+          $form = $('#message-form'),
+          $input = $('#message-val');
+    
+          $form.submit(function(e){
+            e.preventDefault();
+            socket.emit('message', $input.val());
+            $input.val() = '';
+          });
+
+          socket.on('new message', function(data){
+            $msg.append('> '+data+'<br/>');
+          });
+  });
+</script>
+
+</html>
