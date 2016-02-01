@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mocha": "^2.4.2"
+    "body-parser": "^1.14.2",
+    "express": "^4.13.4",
+    "mocha": "^2.4.2",
+    "socket.io": "^1.4.5"
   }
 }
