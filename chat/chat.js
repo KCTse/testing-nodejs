@@ -3,7 +3,7 @@ var express = require('express'),
       server = require('http').createServer(app),
       io = require('socket.io').listen(server);
 
-var users = [];
+var users = {};
 
 server.listen(3000, function(){
   console.log('listening to port '+server.address().port);
@@ -22,13 +22,13 @@ io.sockets.on('connection', function(socket){
 
   // username is emitted
   socket.on('new user', function(data, callback){
-    if (users.indexOf(data) != -1){
+    if (data in users){
       callback(false); // username has been used
     }
     else{
       callback(true);
       socket.username = data;
-      users.push(socket.username);
+      users[socket.username] = socket;
       updateUsers();
     }
   });
@@ -36,12 +36,12 @@ io.sockets.on('connection', function(socket){
   // discconnect
   socket.on('disconnect', function(){
     if(!socket.username) return; // the case that user disconnect without entering the name
-    users.splice(users.indexOf(socket.username), 1);
+    delete users[socket.username];
     updateUsers();
   });
 
   // update user online list
   function updateUsers(){
-    io.sockets.emit('user online', users);
+    io.sockets.emit('user online', Object.keys(users));
   }
 });

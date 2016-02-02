@@ -1,7 +1,5 @@
-var spawn = require('child_process').spawn;
-var net = require('net');
-
-console.log(net.Socket());
+// var spawn = require('child_process').spawn;
+// var net = require('net');
 
 // if(process.argv[2] === 'child') {
 //   setInterval(function(){
@@ -41,3 +39,8 @@ console.log(net.Socket());
 //   function(){
 //     console.log(server.address());
 // });
+
+var tmp = {a: 'something', b: 'another thing'};
+console.log(tmp);
+console.log('a' in tmp);
+console.log('c' in tmp);
