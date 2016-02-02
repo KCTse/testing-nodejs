@@ -40,7 +40,24 @@
 //     console.log(server.address());
 // });
 
-var tmp = {a: 'something', b: 'another thing'};
-console.log(tmp);
-console.log('a' in tmp);
-console.log('c' in tmp);
+// var express = require('express'), app = express();
+// var user = 0;
+
+// app.listen(3000, function(err){
+//   if(err) throw err;
+//   console.log('listening to port 3000');
+// });
+// app.get('/', function(req, res){
+//   saySomething(user);
+//   user++;
+//   res.send('end');
+// });
+
+// function saySomething(user){
+//   setInterval(function(){
+//     console.log('im user #'+user);
+//   }, 1000);
+// }
+
+var str = '/w jacky dont let the prof know this';
+console.log(str.split(/^(\/w)\s([^\s]*)\s(.+)/).filter(Boolean));

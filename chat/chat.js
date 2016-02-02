@@ -17,7 +17,19 @@ app.get('/', function(req, res){
 io.sockets.on('connection', function(socket){
   // message is emitted
   socket.on('message', function(data){
-    io.sockets.emit('new message', {'user': socket.username, 'msg': data});
+    data = data.trim().split(/^(\/w)\s([^\s]*)\s(.+)/).filter(Boolean);
+    if(data[0] == '/w'){
+      if(data[1] in users){
+        users[data[1]].emit('new message', {'user': socket.username, 'msg': data[2]+' <i style="font-size:9px;">--whisper from '+socket.username+'</i>'});
+        users[socket.username].emit('new message', {'user': socket.username, 'msg': data[2]+' <i style="font-size:9px;">--whisper to '+data[1]+'</i>'});
+      }
+      else{
+        console.log('no such user" "'+data[1]+'"');
+      }
+    }
+    else{
+      io.sockets.emit('new message', {'user': socket.username, 'msg': data});
+    }
   });
 
   // username is emitted
